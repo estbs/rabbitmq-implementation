@@ -1,0 +1,12 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: esteban
+    password: estbui123
+    virtual-host: vh-rabbitmq
+    listener:
+      simple:
+        acknowledge-mode: manual
+        max-concurrency: 2
+        concurrency: 2
