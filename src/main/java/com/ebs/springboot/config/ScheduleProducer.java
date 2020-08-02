@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.ebs.springboot.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +7,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import com.ebs.springboot.service.RabbitMessageQueueProducer;
 
-/**
- * @author esteban
- *
- */
 @Configuration
 @EnableScheduling
-public class scheduleProducer {
+public class ScheduleProducer {
 	
 	@Autowired
 	private RabbitMessageQueueProducer rabbitMessageQueueProducer;
