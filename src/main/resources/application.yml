@@ -2,8 +2,8 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: esteban
-    password: estbui123
+    username: rabbitmq-impl-user
+    password: Rabbitmq123Password
     virtual-host: vh-rabbitmq
     listener:
       simple:
