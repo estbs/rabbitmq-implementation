@@ -1,12 +1,8 @@
 spring:
+  profiles: dev
   rabbitmq:
     host: localhost
     port: 5672
-    username: rabbitmq-impl-user
-    password: Rabbitmq123Password
+    username: rabbituser
+    password: rabbitpass
     virtual-host: vh-rabbitmq
-    listener:
-      simple:
-        acknowledge-mode: manual
-        max-concurrency: 2
-        concurrency: 2
