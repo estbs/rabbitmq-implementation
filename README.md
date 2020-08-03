@@ -4,7 +4,7 @@ This is a basic implementation of RabbitMQ using spring boot 2.2.7 (JDK Java 11)
 
 # Download rabbitmq docker from docker hub.
 1. Pull rabbitmq from docker hub: docker pull rabbitmq
-2. run command: docker run -d --hostname rabbitmq --name rabbitmq -e RABBITMQ_DEFAULT_USER=ebs-rabbitmq -e RABBITMQ_DEFAULT_PASS=EbsRabbit22 -p 15672:15672 rabbitmq:3-management
+2. run command: docker run -d --name rabbitmq -e RABBITMQ_DEFAULT_USER=ebs-rabbitmq -e RABBITMQ_DEFAULT_PASS=EbsRabbit22 -p 15672:15672 -p 5672:5672 rabbitmq:3-management
     - rabbitmq: Specified name to the container.
     - RABBITMQ_DEFAULT_USER: User to rabbitmq. Default: guest
     - RABBITMQ_DEFAULT_PASS: Password to the user. Default: guest
