@@ -7,7 +7,6 @@ import java.util.Arrays;
 import com.rabbitmq.client.Channel;
 
 import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
@@ -26,6 +25,8 @@ import org.springframework.amqp.support.AmqpHeaders;
 @AllArgsConstructor
 public class MessagesListenerImpl implements MessagesListener {
 
+    private static final String QUEUE_PARKING_LOT = "ebs.parkinglot";
+
     RabbitTemplate rabbitTemplate;
 
     @Override
@@ -42,10 +43,11 @@ public class MessagesListenerImpl implements MessagesListener {
     }
 
     @Override
-    public void getCreatedMessage1(@Payload String payload, @Header(AmqpHeaders.CHANNEL) Channel channel,
+    public void getCreatedMessage1(Message message, @Header(AmqpHeaders.CHANNEL) Channel channel,
             @Header(AmqpHeaders.DELIVERY_TAG) Long deliveryTag) throws IOException {
+        var payload = new String(message.getBody(), StandardCharsets.US_ASCII);
         log.info("message 1 queued: ".concat(payload));
-        if (Integer.parseInt(payload) < 5) {
+        if (Integer.parseInt(payload) >= 3 && Integer.parseInt(payload) < 5) {
             channel.basicReject(deliveryTag, false);
         } else {
             channel.basicAck(deliveryTag, false);
@@ -53,10 +55,11 @@ public class MessagesListenerImpl implements MessagesListener {
     }
 
     @Override
-    public void getCreatedMessage2(@Payload String payload, @Header(AmqpHeaders.CHANNEL) Channel channel,
+    public void getCreatedMessage2(Message message, @Header(AmqpHeaders.CHANNEL) Channel channel,
             @Header(AmqpHeaders.DELIVERY_TAG) Long deliveryTag) throws IOException {
+        var payload = new String(message.getBody(), StandardCharsets.US_ASCII);
         log.info("message 2 queued: ".concat(payload));
-        if (Integer.parseInt(payload) < 5) {
+        if (Integer.parseInt(payload) >= 5 && Integer.parseInt(payload) < 7) {
             channel.basicReject(deliveryTag, false);
         } else {
             channel.basicAck(deliveryTag, false);
@@ -64,10 +67,11 @@ public class MessagesListenerImpl implements MessagesListener {
     }
 
     @Override
-    public void getCreatedMessage3(@Payload String payload, @Header(AmqpHeaders.CHANNEL) Channel channel,
+    public void getCreatedMessage3(Message message, @Header(AmqpHeaders.CHANNEL) Channel channel,
             @Header(AmqpHeaders.DELIVERY_TAG) Long deliveryTag) throws IOException {
+        var payload = new String(message.getBody(), StandardCharsets.US_ASCII);
         log.info("message 3 queued: ".concat(payload));
-        if (Integer.parseInt(payload) < 5) {
+        if (Integer.parseInt(payload) >= 7 && Integer.parseInt(payload) < 9) {
             channel.basicReject(deliveryTag, false);
         } else {
             channel.basicAck(deliveryTag, false);
@@ -83,8 +87,10 @@ public class MessagesListenerImpl implements MessagesListener {
             if (countDLQ < 3) {
                 var originalQueue = (String) xDeathHeaders.get(0).get("queue");
                 rabbitTemplate.convertAndSend(StringUtils.EMPTY, originalQueue, message);
-                channel.basicAck(deliveryTag, false);
+            } else {
+                rabbitTemplate.convertAndSend(StringUtils.EMPTY, QUEUE_PARKING_LOT, message);
             }
+            channel.basicAck(deliveryTag, false);
         }
     }
     
