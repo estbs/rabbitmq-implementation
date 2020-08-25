@@ -8,6 +8,7 @@ spring:
     virtual-host: vh-rabbitmq
     listener:
       simple:
+        acknowledge-mode: manual
         retry:
           enabled: true
           max-attempts: 3
