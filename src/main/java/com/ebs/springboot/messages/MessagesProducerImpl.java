@@ -26,6 +26,7 @@ public class MessagesProducerImpl implements MessagesProducer {
     public void queueMessage(int messageNumber) {
         var messageProperties = new MessageProperties();
         messageProperties.setContentType(TEXT_PLAIN);
+        messageProperties.setHeader("customHeader", "CustomHeaderValue");
         var messageBody = Integer.toString(messageNumber);
         var message = new Message(messageBody.getBytes(StandardCharsets.UTF_8), messageProperties);
         rabbitTemplate.convertAndSend(EXCHANGE_CREATE_MESSAGES, StringUtils.EMPTY, message);
