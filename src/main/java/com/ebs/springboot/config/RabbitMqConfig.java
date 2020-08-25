@@ -24,6 +24,7 @@ public class RabbitMqConfig {
 	public static final String EXCHANGE_CREATE_MESSAGES_DLQ = "ebs.messages.create.dlq";
 	public static final String BINDING_CREATE_MESSAGES_DLQ = "ebs.messages.dlq";
 	public static final String QUEUE_CREATED_MESSAGES_DLQ = "ebs.messages.created.dlq";
+	private static final String QUEUE_PARKING_LOT = "ebs.parkinglot";
 
 	private static final String DEAD_LETTER_EXCHANGE_ARGUMENT = "x-dead-letter-exchange";
 	private static final String DEAD_LETTER_ROUTINGKEY_ARGUMENT = "x-dead-letter-routing-key";
@@ -46,6 +47,11 @@ public class RabbitMqConfig {
 	@Bean
 	Queue ebsMessagesDLQueue() {
 		return new Queue(QUEUE_CREATED_MESSAGES_DLQ, true);
+	}
+
+	@Bean
+	Queue ebsParkingLotQueue() {
+		return new Queue(QUEUE_PARKING_LOT, true);
 	}
 
 	@Bean
