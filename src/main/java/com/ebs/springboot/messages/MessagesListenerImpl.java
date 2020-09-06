@@ -26,11 +26,14 @@ import org.springframework.amqp.support.AmqpHeaders;
 public class MessagesListenerImpl implements MessagesListener {
 
     private static final String QUEUE_PARKING_LOT = "ebs.parkinglot";
+    private static final String COUNT = "count";
+    private static final String QUEUE = "queue";
 
     RabbitTemplate rabbitTemplate;
 
     @Override
-    public void getCreatedMessage(Message message, @Header(AmqpHeaders.CHANNEL) Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) Long deliveryTag) throws IOException {
+    public void getCreatedMessage(Message message, @Header(AmqpHeaders.CHANNEL) Channel channel,
+            @Header(AmqpHeaders.DELIVERY_TAG) Long deliveryTag) throws IOException {
         var payload = new String(message.getBody(), StandardCharsets.US_ASCII);
         log.info("message queued: ".concat(payload));
         if (Integer.parseInt(payload) < 3) {
@@ -79,13 +82,14 @@ public class MessagesListenerImpl implements MessagesListener {
     }
 
     @Override
-    public void getCreatedMessageDLQ(Message message, @Header(AmqpHeaders.CHANNEL) Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) Long deliveryTag) throws IOException {
+    public void getCreatedMessageDLQ(Message message, @Header(AmqpHeaders.CHANNEL) Channel channel,
+            @Header(AmqpHeaders.DELIVERY_TAG) Long deliveryTag) throws IOException {
         log.info("message DLQ queued: ".concat(Arrays.toString(message.getBody())));
         var xDeathHeaders = message.getMessageProperties().getXDeathHeader();
         if (!xDeathHeaders.isEmpty()) {
-            var countDLQ = (Long) xDeathHeaders.get(0).get("count");
+            var countDLQ = (Long) xDeathHeaders.get(0).get(COUNT);
             if (countDLQ < 3) {
-                var originalQueue = (String) xDeathHeaders.get(0).get("queue");
+                var originalQueue = (String) xDeathHeaders.get(0).get(QUEUE);
                 rabbitTemplate.convertAndSend(StringUtils.EMPTY, originalQueue, message);
             } else {
                 rabbitTemplate.convertAndSend(StringUtils.EMPTY, QUEUE_PARKING_LOT, message);
@@ -93,5 +97,5 @@ public class MessagesListenerImpl implements MessagesListener {
             channel.basicAck(deliveryTag, false);
         }
     }
-    
+
 }
